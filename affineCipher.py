@@ -2,23 +2,25 @@
 class AffineCipher():
     letters_list=[' ','ñ' ,'a','b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     letters=  {letter: index  for index, letter in enumerate(letters_list)}
-    def __init__(self,message):
-        self.x = message
+    def __init__(self,a,b):
+        self.a=a
+        self.b=b
         pass
     
-    def encrypt(self,a,b):
+    def encrypt(self,x):
         
         encryptText=""
         
-        for i in self.x:
+        for i in x:
             index= self.letters.get(i)
-            newIndex= (a*index+b) %len(self.letters_list)
+            newIndex= (self.a*index+self.b) %len(self.letters_list)
             encryptText+=self.letters_list[newIndex]
 
         return encryptText
     
-    def decrypt(self,y,a,b):
-        
+    def decrypt(self,y):
+        a=self.a
+        b=self.b
         a_invert= self.__inverse(a,len(self.letters_list))
         decryptText= ""
         
@@ -49,8 +51,8 @@ pass
 
 if(__name__ == "__main__"):
     message=input("Insert message: ")
-    affineCipher= AffineCipher(message)
-    y=affineCipher.encrypt(1,2)
+    affineCipher= AffineCipher(1,2)
+    y=affineCipher.encrypt(message)
     print(y)
-    print(affineCipher.decrypt(y,1,2))
+    print(affineCipher.decrypt(y))
     
