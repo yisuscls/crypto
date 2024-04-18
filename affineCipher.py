@@ -1,7 +1,9 @@
 
 class AffineCipher():
-    letters_list=[' ','ñ' ,'a','b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+    letters_list=['a','b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     letters=  {letter: index  for index, letter in enumerate(letters_list)}
+   
+   
     def __init__(self,a,b):
         self.a=a
         self.b=b
@@ -13,7 +15,7 @@ class AffineCipher():
         
         for i in x:
             index= self.letters.get(i)
-            newIndex= (self.a*index+self.b) %len(self.letters_list)
+            newIndex= (self.a*index+self.b) % len(self.letters_list)
             encryptText+=self.letters_list[newIndex]
 
         return encryptText
@@ -22,6 +24,9 @@ class AffineCipher():
         a=self.a
         b=self.b
         a_invert= self.__inverse(a,len(self.letters_list))
+    
+        if type(a_invert)==bool:
+            return "a y 26 deben ser coprimos para que exista el inverso."
         decryptText= ""
         
         for i in y:
@@ -51,8 +56,13 @@ pass
 
 if(__name__ == "__main__"):
     message=input("Insert message: ")
-    affineCipher= AffineCipher(1,2)
+    a=int( input("Insert the value of a: "))
+    b=int(input("Insert the value of b: "))
+    affineCipher= AffineCipher(a,b)
+    
     y=affineCipher.encrypt(message)
+    print("\nMessage encrypted :")
     print(y)
+    print("\nMessage decrypted :")
     print(affineCipher.decrypt(y))
     
