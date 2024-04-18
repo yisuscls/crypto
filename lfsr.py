@@ -4,10 +4,12 @@ class LFSR():
         self.pol = pol
         if si is None:
             self.generate_initial_state()
-        self.si = si
+            self.si=self.si
+        else:
+            self.si = si
         pass
     def generate_initial_state(self):
-        length=max(self.pol)
+        length=max(self.pol)+1
         self.si=[random.randint(0, 1) for _ in range(length)]
         pass
     def generateSm(self):
@@ -27,8 +29,8 @@ class LFSR():
 
 if(__name__ == "__main__"):
     poly= (0,1,2,3)
-    si=[0, 0, 0, 1]
-    lfsr=LFSR(poly, si)
+    #si=[0, 0, 0, 1]
+    lfsr=LFSR(poly)
     len_key=16
     
     print("Key length:",len_key)
