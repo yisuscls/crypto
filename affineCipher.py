@@ -9,14 +9,18 @@ class AffineCipher():
         self.b=b
         pass
     
-    def encrypt(self,x):
+    def encrypt(self, x ):
         
         encryptText=""
         
         for i in x:
-            index= self.letters.get(i)
-            newIndex= (self.a*index+self.b) % len(self.letters_list)
-            encryptText+=self.letters_list[newIndex]
+            i=i.lower()
+            if(i in self.letters_list):
+                index= self.letters.get(i)
+                newIndex= (self.a*index+self.b) % len(self.letters_list)
+                encryptText+=self.letters_list[newIndex]
+            else:
+                encryptText+=i
 
         return encryptText
     
@@ -30,10 +34,13 @@ class AffineCipher():
         decryptText= ""
         
         for i in y:
-            index =self.letters.get(i)
-            newIndex= (a_invert*(index-b)) % len(self.letters_list)
-            decryptText+=self.letters_list[newIndex]
-            
+            i=i.lower()
+            if(i in self.letters_list):
+                index =self.letters.get(i)
+                newIndex= (a_invert*(index-b)) % len(self.letters_list)
+                decryptText+=self.letters_list[newIndex]
+            else:
+                decryptText+=i
         return decryptText
     
     def __gcd(self,a, b):

@@ -29,9 +29,9 @@ class LFSR():
 
 if(__name__ == "__main__"):
     poly= (0,1,2,3)
-    #si=[0, 0, 0, 1]
-    lfsr=LFSR(poly)
-    len_key=16
+    si=[0, 0, 0, 1]
+    lfsr=LFSR(poly,si)
+    len_key=5
     
     print("Key length:",len_key)
     print("key:\n", lfsr.sequence(len_key))
