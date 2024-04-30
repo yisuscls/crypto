@@ -183,8 +183,8 @@ class DES():
     # Other supporting functions remain unchanged
 
 if __name__ == "__main__":
-    key = '1001111011111111111111111111101111111111111011111111111111111111'  # 64-bit key, note this should ideally be a valid DES key
-    text = '0011110111111111111111111101101111111111111111111111111111111110' 
+    key = '1001111011111111011111111111101111111111111011111111111111111111'  # 64-bit key, note this should ideally be a valid DES key
+    text = '0011110111111111111110111101101111111111111111111111111111111110' 
     des=DES(key)# 64-bit text
     encrypted_text =des.des_encrypt(text)
     decrypted_text = des.des_decrypt(encrypted_text)
