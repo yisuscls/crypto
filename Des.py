@@ -148,7 +148,7 @@ class DES():
     def des_decrypt(self,block):
         
         subkeys = self.generate_subkeys(self.key)  # Reuse subkey generation logic
-        subkeys[::-1] # Reverse the order of the subkeys for decryption
+        subkeys=subkeys[::-1] # Reverse the order of the subkeys for decryption
 
         block = self.permute(block, self.IP)
         left, right = block[:32], block[32:]
@@ -183,8 +183,8 @@ class DES():
     # Other supporting functions remain unchanged
 
 if __name__ == "__main__":
-    key = '1' * 64  # 64-bit key, note this should ideally be a valid DES key
-    text = '0011111111111111111111111111111111111111111111111111111111111110' 
+    key = '1001111011111111111111111111101111111111111011111111111111111111'  # 64-bit key, note this should ideally be a valid DES key
+    text = '0011110111111111111111111101101111111111111111111111111111111110' 
     des=DES(key)# 64-bit text
     encrypted_text =des.des_encrypt(text)
     decrypted_text = des.des_decrypt(encrypted_text)
