@@ -1,7 +1,8 @@
 def square_and_multiply(x, H, n):
     # Convert H to binary
     h = bin(H)[2:]  # Remove the '0b' prefix and get the binary representation as a string
-    print("H:",h)
+    if __name__ == '__main__':
+        print("H:",h)
     # Initialize r with x
     r = x
 
@@ -12,10 +13,10 @@ def square_and_multiply(x, H, n):
             r = (r * x) % n  # Multiply step if the current bit is 1
 
     return r
-
-# Example usage:
-x = 3  # BASE
-H = 13  # Exponente
-n = 17  # Modulo
-result = square_and_multiply(x, H, n)
-print(f"The result of {x}^{H} mod {n} is {result}")
+if __name__ == '__main__':
+    # ejemplo de uso
+    x = 3  # BASE
+    H = 13  # Exponente
+    n = 17  # Modulo
+    result = square_and_multiply(x, H, n)
+    print(f"The result of {x}^{H} mod {n} is {result}")
