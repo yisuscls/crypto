@@ -106,7 +106,7 @@ if __name__ == "__main__":
     message = "Hola"
     # se generan los coeficientes a y b para el cifrado de forma aleatoria pero tambien 
     # pueden pasar como parametros: AffineCipher(a,b)
-    affineCipher = AffineCipher(12)
+    affineCipher = AffineCipher()
 
     # Cifrar el mensaje y mostrar el resultado.
     y = affineCipher.encrypt(message)

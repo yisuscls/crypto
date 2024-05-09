@@ -7,9 +7,8 @@ class StreamCipher():
         Parámetros:
         - key (str, opcional): Clave binaria predefinida para cifrado y descifrado. Si no se proporciona, se puede generar una.
         """
-        if key is not None:
-            self.key = key
-
+        self.key = key
+        
     def encrypt(self, x):
         """
         Método para cifrar un mensaje binario usando una clave de flujo.
@@ -19,6 +18,10 @@ class StreamCipher():
         Devuelve:
         - yi (str): Mensaje cifrado.
         """
+        if self.key is  None:
+            self.generateKey(len(x))
+        if len(self.key)!=len(x):
+            raise Exception("El tamaño de la llave y del mensaje deben ser el mismo")
         si = 0
         yi = ""
         for x1 in x:
@@ -69,18 +72,19 @@ if __name__ == "__main__":
     # Mensaje binario de ejemplo a cifrar.
     message = "101010101010101001101110110111"
     # Creación de una instancia de StreamCipher.
+    # se puede ingresar la llave como para metro pero debe ser un 
+    # un string de 1 y 0 del mismo tamaño que el mensaje
     streamCipher = StreamCipher()
-    # Generación de una clave del mismo tamaño que el mensaje.
-    streamCipher.generateKey(len(message))
+    y = streamCipher.encrypt(message)
     
-    print("Message: \n", message)
-    print("Key: \n", streamCipher.getKey())
+    print("llave: \n", streamCipher.key)
     
     # Cifrado del mensaje y muestra del resultado.
-    print("\nMessage encrypted :")
-    y = streamCipher.encrypt(message)
-    print(y)
+    print("\nMensaje Cifrado :\n",y)
+    
+
     
     # Descifrado del mensaje cifrado y muestra del resultado.
-    print("\nMessage decrypted :")
-    print(streamCipher.decrypt(y))
+    print("\nMensaje Descifrado:\n",streamCipher.decrypt(y))
+    # mensaje Original
+    print("\nMensaje Original: \n", message)
