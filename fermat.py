@@ -1,6 +1,16 @@
 import random
 
 def prueba_de_primalidad_fermat(p, s):
+    """
+    Realiza la prueba de primalidad de Fermat para determinar si un número es probablemente primo.
+
+    Entradas:
+    - p (int): Número que se quiere probar si es primo.
+    - s (int): Número de veces que se realizará la prueba, conocido como parámetro de seguridad.
+
+    Salida:
+    - bool: Devuelve True si p es probablemente primo, False si es compuesto.
+    """
     if p == 2:
         return True  # 2 es un número primo
     if not p & 1:
