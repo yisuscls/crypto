@@ -43,6 +43,11 @@ class AES():
 
 
     def __init__(self, key=None):
+        """
+        Inicializa una instancia de AES con una clave específica.
+        Entrada:
+        - key (str): Clave binaria de 128 bits. Si no se provee, se genera una aleatoriamente.
+        """
         self.key = key
         if key==None:
             self.key=self.generate_key(128)
@@ -51,10 +56,17 @@ class AES():
             case 128:
                 self.nr=10
             case _:
-                raise Exception("invalid key length. The length must be 128.")
+                raise Exception("Tamaño de la llave no valida. La llave debe tener un largo de 128 bits.")
     def encrypt(self,text):
+        """
+        Cifra un bloque de texto usando el algoritmo AES.
+        Entrada:
+        - text (str): Bloque de texto de 128 bits.
+        Salida:
+        - str: Texto cifrado como cadena binaria.
+        """
         if(len(text)!=128):
-            raise Exception("invalid input length. The length must be 128")
+            raise Exception("Tamaño del mensaje no valido. El mensaje debe tener un largo de 128 bits")
         keys=self.generate_keys(self.key)
         
         A= self.split_data(text,8)
@@ -74,43 +86,61 @@ class AES():
             result+=i
         return result
     def decrypt(self, text):
-        # Convert the binary string input into hex for processing
+        """
+        Descifra un bloque de texto cifrado usando el algoritmo AES.
+        Entrada:
+        - text (str): Texto cifrado como cadena binaria.
+        Salida:
+        - str: Texto descifrado como cadena binaria.
+        """
+        if(len(text)!=128):
+            raise Exception("Tamaño del mensaje no valido. El mensaje debe tener un largo de 128 bits")
         keys = self.generate_keys(self.key)
         text_hex = self.bi_hex(self.split_data(text, 8))
     
-        # Start decryption by applying the last round key
         A = self.xor(text_hex, keys[self.nr])
         
-        # Perform the last round without the MixColumns
+        
         A = self.byte_substitution_inv(A)
         
         A = self.shift_rows_inv(A)
-        # Iterate over the remaining rounds in reverse order
+        
         for i in range(self.nr - 1, 0, -1):
             A = self.xor(A, keys[i])
             A = self.mix_columns_inv(A)
             A = self.byte_substitution_inv(A)
             A = self.shift_rows_inv(A)
 
-        # Final round key application
+        
         A = self.xor(A, keys[0])
 
-        # Convert hex back to binary to return the result
+        
         result = self.hex_bi(A)
         final_result = "".join(result)
         return final_result
 
     def byte_substitution_inv(self, A):
-        # Implement inverse S-box substitution
+        """
+        Aplica la sustitución inversa de bytes usando la INV_SBOX a un bloque de datos.
+        Entrada:
+        - A (list): Lista de bytes en hexadecimal.
+        Salida:
+        - list: Lista de bytes tras aplicar la SBOX.
+        """
         B = []
         for ai in A:
             row, column = self.get_row_columns(ai)
-            # Find the value in the inverse S-box; you would need to define the inverse S-box
             B.append(self.INV_SBOX[row][column])
         return B
 
     def shift_rows_inv(self, B):
-        # Inverse of the shift_rows method
+        """
+        Aplica el desplazamiento inverso de filas a un bloque de datos.
+        Entrada:
+        - B (list): Lista de bytes en hexadecimal.
+        Salida:
+        - list: Lista de bytes tras desplazar las filas.
+        """
         return [
             B[0], B[13], B[10], B[7],
             B[4], B[1], B[14], B[11],
@@ -118,46 +148,31 @@ class AES():
             B[12], B[9], B[6], B[3]
         ]
 
-    def mix_columns_inv(self, B):
-        # Implement the inverse of mix_column using your C_inv method
-        B = self.split_data(B, 4)
-        result = []
-        for Bi in B:
-            result.extend(self.C_inv(Bi))
-        return result
 
-    def C_inv(self, Bi):
-        GF = galois.GF(2**8)
-        matriz = [
-            ['0E', '0B', '0D', '09'],
-            ['09', '0E', '0B', '0D'],
-            ['0D', '09', '0E', '0B'],
-            ['0B', '0D', '09', '0E']
-        ]
-        Ci = []
-        p = galois.Poly([1, 1, 0, 1, 1, 0, 0, 0, 1], field=GF)
-        for i in range(4):
-            sum = GF(0)
-            for j in range(4):
-                a = galois.Poly(self.pol(matriz[i][j]), field=GF) 
-                b = galois.Poly(self.pol(Bi[j]), field=GF)
-                sum += (a * b) % p
-            c = []
-            for x in list(sum.coefficients):
-                c.append(int(x))
-            binary_string = ''.join(str(bit) for bit in c)
-            hex_string = format(int(binary_string, 2), 'x')
-            Ci.append(hex_string.upper())
-        return Ci
+    
 
     
     def byte_substitution(self,A):
+        """
+        Aplica la sustitución de bytes usando la SBOX a un bloque de datos.
+        Entrada:
+        - A (list): Lista de bytes en hexadecimal.
+        Salida:
+        - list: Lista de bytes tras aplicar la SBOX.
+        """
         B=[]
         for ai in A:
             row,column=self.get_row_columns(ai)
             B.append(self.SBOX[row][column])
         return B
     def shift_rows(self,B):
+        """
+        Aplica el desplazamiento de filas a un bloque de datos.
+        Entrada:
+        - B (list): Lista de bytes en hexadecimal.
+        Salida:
+        - list: Lista de bytes tras desplazar las filas.
+        """
         return [
         B[0], B[5], B[10], B[15],
         B[4], B[9], B[14], B[3],
@@ -166,6 +181,13 @@ class AES():
     ]
     
     def mix_columns_inv(self,B):
+        """
+        Aplica la inversa operación de mezcla de columnas a un bloque de datos.
+        Entrada:
+        - B (list): Lista de bytes en hexadecimal.
+        Salida:
+        - list: Lista de bytes después de mezclar columnas.
+        """
         B=self.split_data(B,4)
         result=[]
         for Bi in B:
@@ -174,6 +196,13 @@ class AES():
             
         return result
     def mix_column(self,B):
+        """
+        Aplica la operación de mezcla de columnas a un bloque de datos.
+        Entrada:
+        - B (list): Lista de bytes en hexadecimal.
+        Salida:
+        - list: Lista de bytes después de mezclar columnas.
+        """
         B=self.split_data(B,4)
         result=[]
         for Bi in B:
@@ -182,6 +211,13 @@ class AES():
             
         return result
     def C_inv(self,Bi):
+        """
+        calcula la multiplicación de la matrices del MixcolumnInv layer.
+        Entrada:
+        - Bi (list): Sublista de 4 bytes representando una columna.
+        Salida:
+        - list: Lista de bytes resultante de aplicar la mezcla de columnas.
+        """
         GF = galois.GF(2)
         matriz = [
         ['E', 'B', 'D', '9'],
@@ -204,6 +240,13 @@ class AES():
             Ci.append(hex_string.upper())
         return  Ci
     def C(self,Bi):
+        """
+        calcula la multiplicación de la matrices del Mixcolumn layer.
+        Entrada:
+        - Bi (list): Sublista de 4 bytes representando una columna.
+        Salida:
+        - list: Lista de bytes resultante de aplicar la mezcla de columnas.
+        """
         GF = galois.GF(2)
         matriz = [
         ['2', '3', '1', '1'],
@@ -226,11 +269,30 @@ class AES():
             Ci.append(hex_string.upper())
         return  Ci
     def pol(self,hex_number):
-        # Convert hex to binary string, then to a list of integers (0 and 1)
+        """
+        Convierte un número hexadecimal en una lista de coeficientes binarios que representan un polinomio.
+        
+        Este método es utilizado en las transformaciones de mezcla de columnas donde se necesitan
+        representaciones polinomiales de los bytes para realizar multiplicaciones en el campo de Galois GF(2^8).
+
+        Entrada:
+        - hex_number (str): Número en formato hexadecimal que se convertirá a su representación polinomial.
+        
+        Salida:
+        - list: Lista de enteros (0 o 1) que representan los coeficientes del polinomio correspondiente al
+                número hexadecimal dado. Los coeficientes se ordenan desde el término de grado más alto al más bajo.
+        """
         bin_list = [int(b) for b in bin(int(hex_number, 16))[2:]]
         return bin_list
     
     def generate_keys(self, key):
+        """
+        Genera todas las subclaves necesarias para el cifrado AES a partir de la clave maestra.
+        Entrada:
+        - key (str): Clave maestra en formato binario.
+        Salida:
+        - list: Lista de subclaves en formato hexadecimal.
+        """
         keys=[]
         key= self.split_data(key,8)
         key=self.bi_hex(key)
@@ -246,7 +308,14 @@ class AES():
             keys.append(w4+w5+w6+w7)
         return keys
     def g_func(self,V32,round):
-        
+        """
+        Función que modifica el último bloque de subclave de 32 bits según la ronda específica.
+        Entrada:
+        - V32 (str): Subclave de 32 bits en formato hexadecimal.
+        - round (int): Número de ronda actual.
+        Salida:
+        - str: Subclave de 32 bits modificada.
+        """
         V32= self.rotate_left(V32,1)
         Vi=self.byte_substitution(V32)
         Vi[0]=self.xor_hexadecimal(Vi[0],self.RC[round-1])
@@ -255,13 +324,35 @@ class AES():
 
 
     def get_row_columns(self,Ai):
+        """
+        Determina la fila y columna para el acceso a las SBOX o INV_SBOX usando un byte en hexadecimal.
+        Entrada:
+        - Ai (str): Byte en formato hexadecimal.
+        Salida:
+        - tuple: Tupla de dos elementos (fila, columna) determinados a partir del byte.
+        """
         row, column=Ai[0],Ai[1]
         row,column=int("0x"+row,16),int("0x"+column,16)
         return row,column
         
     def split_data(self,data,n):
+        """
+        Divide una cadena de datos en bloques de tamaño n.
+        Entrada:
+        - data (str): Cadena de datos en formato binario.
+        - n (int): Tamaño del bloque.
+        Salida:
+        - list: Lista de bloques divididos.
+        """
         return [data[i:i + n] for i in range(0, len(data), n)]
     def bi_hex(self,data):
+        """
+        Convierte una lista de bloques binarios en hexadecimal.
+        Entrada:
+        - data (list): Lista de bloques binarios.
+        Salida:
+        - list: Lista de bloques en formato hexadecimal.
+        """
         result = []
         for value in data:
             n_int = int('0b'+value, 2)
@@ -269,6 +360,13 @@ class AES():
             result.append(n_hex)
         return result
     def hex_bi(self,data):
+        """
+        Convierte una lista de bloques hexadecimales en binario.
+        Entrada:
+        - data (list): Lista de bloques en formato hexadecimal.
+        Salida:
+        - list: Lista de bloques en formato binario.
+        """
         result = []
         for value in data:
             # Convertir cada valor hexadecimal a un entero
@@ -278,9 +376,23 @@ class AES():
             result.append(n_bin)
         return result
     def rotate_left(self,key, shifts):
+        """
+        Rota los bits de una clave hacia la izquierda.
+        Entrada:
+        - key (str): Clave en formato binario.
+        - shifts (int): Número de desplazamientos hacia la izquierda.
+        Salida:
+        - str: Clave rotada.
+        """
         return key[shifts:] + key[:shifts]
     def xor_hexadecimal(self,hex1, hex2):
-        # Convertir los números hexadecimales a enteros
+        """
+        Realiza una operación XOR entre dos números hexadecimales.
+        Entrada:
+        - hex1 (str), hex2 (str): Números hexadecimales a operar.
+        Salida:
+        - str: Resultado en formato hexadecimal.
+        """
         num1 = int(hex1, 16)
         num2 = int(hex2, 16)
         
@@ -291,12 +403,25 @@ class AES():
         resultado_hex = format(resultado_xor, '02x')
         return resultado_hex
     def xor(self,a,b):
+        """
+        Realiza una operación XOR entre dos listas de bloques hexadecimales.
+        Entrada:
+        - a (list), b (list): Listas de bloques hexadecimales.
+        Salida:
+        - list: Lista de bloques después de la operación XOR.
+        """
         result=[]
         for i in range(len(a)):
             result.append(self.xor_hexadecimal(a[i],b[i]))
         return result
     def generate_key(self,length):
-        """ Genera un string aleatorio de ceros y unos de la longitud especificada. """
+        """
+        Genera una llave aleatoria de la longitud especificada.
+        Entrada:
+        - length (int): Longitud de la llave en bits.
+        Salida:
+        - str: Llave generada aleatoriamente.
+        """
         return ''.join(random.choice(['0', '1']) for _ in range(length))
     pass
 
@@ -306,10 +431,13 @@ if __name__ == '__main__':
     
     encrypted_text=aes.encrypt(text)
     decrypted_text=aes.decrypt(encrypted_text)
-    print("Key :",aes.key)
-    print("Encrypted Text:", encrypted_text)
-    print("Decrypted Text:", decrypted_text)
-    print("Original  Text:", text)
+    print("llave: \n", aes.key)
+    # Cifrado del mensaje y muestra del resultado.
+    print("\nMensaje Cifrado :\n",encrypted_text)
+    # Descifrado del mensaje cifrado y muestra del resultado.
+    print("\nMensaje Descifrado:\n",decrypted_text)
+    # mensaje Original
+    print("\nMensaje Original: \n", text)
 
     
     pass

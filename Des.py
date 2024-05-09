@@ -19,7 +19,7 @@ class DES():
                 34, 2, 42, 10, 50, 18, 58, 26,
                 33, 1, 41, 9, 49, 17, 57, 25]
 
-    # Tablas para la generación de subclaves
+    # Tablas para la generación de subllaves
     PC1 = [57, 49, 41, 33, 25, 17, 9,
             1, 58, 50, 42, 34, 26, 18,
             10, 2, 59, 51, 43, 35, 27,
@@ -97,9 +97,9 @@ class DES():
 
     def __init__(self,key=None) -> None:
         """
-        Inicializa una instancia de DES con una clave específica.
-        Parámetros:
-        - key (str): La clave de cifrado de 64 bits.
+        Inicializa una instancia de DES con una llave específica.
+        Entrada:
+        - key (str): Llave de cifrado de 64 bits. Si no se provee, se genera una aleatoriamente.
         """
         if(key==None):
             key = self.generate_key(64)
@@ -107,20 +107,49 @@ class DES():
             raise Exception("Llave invalida la llave de cifrado debe tener 64 bits")
         self.key = key
         pass
-    # Función para la permutación según una tabla
+    
     def permute(self,block, table):
+        """
+        Permuta un bloque de bits según una tabla de permutación dada.
+        Entrada:
+        - block (str): El bloque de bits a permutar.
+        - table (list): La tabla de permutación a utilizar.
+        Salida:
+        - str: Bloque de bits permutado.
+        """
         return ''.join(block[i - 1] for i in table)
 
-    # Función para rotar a la izquierda cada mitad de la clave
     def rotate_left(self,key, shifts):
+        """
+        Rota bits de una llave hacia la izquierda.
+        Entrada:
+        - key (str): La llave a rotar.
+        - shifts (int): Número de posiciones a rotar.
+        Salida:
+        - str: Llave rotada.
+        """
         return key[shifts:] + key[:shifts]
 
 
 
     def xor(self,bits1, bits2):
+        """
+        Realiza una operación XOR entre dos cadenas de bits.
+        Entrada:
+        - bits1 (str), bits2 (str): Cadenas de bits a operar.
+        Salida:
+        - str: Resultado de la operación XOR.
+        """
         return ''.join(str(int(b1) ^ int(b2)) for b1, b2 in zip(bits1, bits2))
 
     def s_box_transform(self,block):
+        """
+        Transforma un bloque de bits usando las S-boxes.
+        Entrada:
+        - block (str): Bloque de bits de entrada.
+        Salida:
+        - str: Bloque de bits transformado.
+        """
         output = ''
         for i in range(8):  # 8 S-boxes
             six_bits = block[i*6:(i+1)*6]
@@ -133,6 +162,14 @@ class DES():
         return output
 
     def round(self,block, subkey):
+        """
+        Realiza una ronda de cifrado DES.
+        Entrada:
+        - block (str): La mitad derecha del bloque de entrada.
+        - subkey (str): Subllave para esta ronda.
+        Salida:
+        - str: Bloque transformado después de la ronda.
+        """
         expanded_block = self.permute(block, self.E)
         xored_block = self.xor(expanded_block, subkey)
         substituted_block = self.s_box_transform(xored_block)
@@ -140,6 +177,13 @@ class DES():
         return final_permuted
 
     def encrypt(self,block):
+        """
+        Cifra un bloque de 64 bits usando DES.
+        Entrada:
+        - block (str): Bloque de 64 bits a cifrar.
+        Salida:
+        - str: Bloque cifrado de 64 bits.
+        """
         subkeys = self.generate_subkeys(self.key)
         block = self.permute(block, self.IP)
         left, right = block[:32], block[32:]
@@ -155,7 +199,13 @@ class DES():
         return encrypted
 
     def decrypt(self,block):
-        
+        """
+        Descifra un bloque de 64 bits usando DES.
+        Entrada:
+        - block (str): Bloque de 64 bits cifrado.
+        Salida:
+        - str: Bloque descifrado de 64 bits.
+        """
         subkeys = self.generate_subkeys(self.key)  # Reuse subkey generation logic
         subkeys=subkeys[::-1] # Reverse the order of the subkeys for decryption
 
@@ -175,6 +225,13 @@ class DES():
         return encrypted
 
     def generate_subkeys(self,master_key):
+        """
+        Genera las 16 subllaves necesarias para el cifrado DES.
+        Entrada:
+        - master_key (str): La llave maestra de 64 bits.
+        Salida:
+        - list: Lista de 16 subllaves de 48 bits cada una.
+        """
         key = self.permute(master_key, self.PC1)
         left, right = key[:28], key[28:]
         shifts = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
@@ -189,17 +246,28 @@ class DES():
         
         return subkeys
     def generate_key(self,length):
-        """ Genera un string aleatorio de ceros y unos de la longitud especificada. """
+        """
+        Genera una llave aleatoria de la longitud especificada.
+        Entrada:
+        - length (int): Longitud de la llave en bits.
+        Salida:
+        - str: Llave generada aleatoriamente.
+        """
         return ''.join(random.choice(['0', '1']) for _ in range(length))
     # Other supporting functions remain unchanged
 
 if __name__ == "__main__":
     
     text = '0011110111111111111110111101101111111111111111111111111111111110' 
-    des=DES()# 64-bit text
+    des=DES()
     encrypted_text =des.encrypt(text)
     decrypted_text = des.decrypt(encrypted_text)
 
-    print("Encrypted Text:", encrypted_text)
-    print("Decrypted Text:", decrypted_text)
-    print("Original  Text:", text)
+
+    print("llave: \n", des.key)
+    # Cifrado del mensaje y muestra del resultado.
+    print("\nMensaje Cifrado :\n",encrypted_text)
+    # Descifrado del mensaje cifrado y muestra del resultado.
+    print("\nMensaje Descifrado:\n",decrypted_text)
+    # mensaje Original
+    print("\nMensaje Original: \n", text)

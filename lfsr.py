@@ -51,10 +51,13 @@ class LFSR():
 if __name__ == "__main__":
     # Definición del polinomio y el estado inicial.
     poly = (0, 1, 2, 8)
+    # se crean los estados iniciales 
+    # la cantidad de valores iniciales depende del grado del polinomio
+    # si el grado de m entonces se necesitan m+1 elementos de estados inciales
     si = [0, 0, 0, 1,0, 0, 0, 1,1]
-    lfsr = LFSR(poly)
+    lfsr = LFSR(poly,si)
     len_key = 100
     
     # Mostrar la longitud de la clave y la clave generada.
-    print("Key length:", len_key)
-    print("key:\n", lfsr.sequence(len_key))
+    print("Tamaño de la llave:", len_key)
+    print("Llave generada:\n", lfsr.sequence(len_key))
