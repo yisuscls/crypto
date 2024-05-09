@@ -1,5 +1,6 @@
 import math
 import random 
+#usar test primo
 class RSA():
     def __init__(self,p,q,e=None,d=None) -> None:
         self.p = p

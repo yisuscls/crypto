@@ -1,12 +1,13 @@
 import sympy as sy
 import random
 from sq_mul import square_and_multiply
+import miller_rabbin as mr
 
 class Elgamal():
     def __init__(self,p=None,alfa=None)->None:
         if p is None  :
             # Seleccionar un primo p entre 2^1023 y 2^1024
-            self.p = sy.randprime(2**1023, 2**1024)
+            self.p = self.generate_prime()
             # seleccionar un a 
             self.alfa =   random.randint(2,self.p-2)
             return
@@ -56,6 +57,11 @@ class Elgamal():
             return int(x0) % m
         else:
             return self.gcd(a, m)>1
+    def generate_prime(self):
+        while True:
+            p=random.getrandbits(1024)
+            if mr.miller_rabin(p,15):
+                return p
     pass
 
 if __name__ == "__main__":
@@ -78,7 +84,7 @@ if __name__ == "__main__":
     print(f"¿Las claves compartidas son iguales? {'Sí' if KmAlice == KmBob else 'No'}\n")
     
     # Original message
-    message = 3
+    message = 128931746817246817642873618236871268736
     print(f"Original message: {message}")
 
     # Encrypting the message

@@ -1,5 +1,6 @@
 
 import galois
+import random
 class AES():
     SBOX = [
     ['63', '7c', '77', '7b', 'f2', '6b', '6f', 'c5', '30', '01', '67', '2b', 'fe', 'd7', 'ab', '76'],
@@ -41,13 +42,16 @@ class AES():
     RC = ['01', '02', '04', '08', '10', '20', '40', '80', '1B', '36']
 
 
-    def __init__(self, key):
+    def __init__(self, key=None):
         self.key = key
+        if key==None:
+            self.key=self.generate_key(128)
+            key = self.key
         match len(key):
             case 128:
                 self.nr=10
             case _:
-                raise Exception("invalid key length. The length must be 128/192/256.")
+                raise Exception("invalid key length. The length must be 128.")
     def encrypt(self,text):
         if(len(text)!=128):
             raise Exception("invalid input length. The length must be 128")
@@ -291,15 +295,18 @@ class AES():
         for i in range(len(a)):
             result.append(self.xor_hexadecimal(a[i],b[i]))
         return result
+    def generate_key(self,length):
+        """ Genera un string aleatorio de ceros y unos de la longitud especificada. """
+        return ''.join(random.choice(['0', '1']) for _ in range(length))
     pass
 
 if __name__ == '__main__':
-    key= '01111111111111111111111111111110111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111'
     text='10111101111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111'
-    aes = AES(key)
+    aes = AES()
     
     encrypted_text=aes.encrypt(text)
     decrypted_text=aes.decrypt(encrypted_text)
+    print("Key :",aes.key)
     print("Encrypted Text:", encrypted_text)
     print("Decrypted Text:", decrypted_text)
     print("Original  Text:", text)
