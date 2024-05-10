@@ -1,4 +1,4 @@
-import math
+
 import random 
 import miller_rabbin as mr
 import sq_mul as sm
