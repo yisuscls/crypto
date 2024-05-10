@@ -1,2 +1,3 @@
 # crypto
-pip install gmpy2
+ pip install galois
+ pip install random2
