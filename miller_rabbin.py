@@ -39,8 +39,10 @@ def miller_rabin(p, s):
 
 # Ejemplo de uso:
 if __name__ == '__main__':
-    p = 14983  # Candidato a primo
+    p = 91  # Candidato a primo
     s = 5   # Parámetro de seguridad
+    print("Numero a validar si es problamente primo:",p)
+    print("Factor de seguridad",s)
     if miller_rabin(p, s):
         print(f"{p} es probablemente primo")
     else:

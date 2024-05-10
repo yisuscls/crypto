@@ -55,9 +55,11 @@ if __name__ == "__main__":
     # la cantidad de valores iniciales depende del grado del polinomio
     # si el grado de m entonces se necesitan m+1 elementos de estados inciales
     si = [0, 0, 0, 1,0, 0, 0, 1,1]
-    lfsr = LFSR(poly,si)
-    len_key = 100
+    lfsr = LFSR(poly)
+    len_key = 32
     
     # Mostrar la longitud de la clave y la clave generada.
+    print("Coeficientes del polinomio:",poly)
+    print("Estados inciales :",lfsr.si)
     print("Tamaño de la llave:", len_key)
     print("Llave generada:\n", lfsr.sequence(len_key))

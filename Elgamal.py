@@ -1,4 +1,3 @@
-import sympy as sy
 import random
 from sq_mul import square_and_multiply
 import miller_rabbin as mr

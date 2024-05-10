@@ -25,8 +25,10 @@ def prueba_de_primalidad_fermat(p, s):
 # Ejemplo de uso:
 if __name__ == '__main__':
     print("Prueba de primalidad de Fermat")
-    p = 17  # Candidato a primo
+    p = 91  # Candidato a primo
     s = 5   # Parámetro de seguridad
+    print("Numero a validar si es problamente primo:",p)
+    print("Factor de seguridad",s)
     if prueba_de_primalidad_fermat(p, s):
         print(f"{p} es probablemente primo")
     else:
